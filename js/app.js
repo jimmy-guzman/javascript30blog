@@ -1,42 +1,59 @@
 const daysBox = document.querySelector(".days");
+const searchBox = document.querySelector("#search");
 
-function displayDays() {
-  days.forEach(day => {
+function displayDays(displayedDays) {
+  displayedDays.forEach(day => {
     daysBox.innerHTML += `
         <div class="day">
             <div class="bar">
-                <h2><span class="date">Day ${day.day}: </span><span class="title">${
-    day.title
-    }</span></h2>
+                <h2><span class="date">Day ${
+                  day.day
+                }: </span><span class="title">${day.title}</span></h2>
             <button id="dropdown" class="btn-default">
                 <i class="fas fa-caret-down"></i>
             </button>
             </div>
 
             <div class="summary">
-            <p>${day.summary} <a href="#">Keep Reading <i class="fas fa-book"></i></a></p>
+            <p>${
+              day.summary
+            } <a href="#">Keep Reading <i class="fas fa-book"></i></a></p>
         </div>
         </div>
 
         `;
   });
-}
-displayDays();
+  const bars = document.querySelectorAll(".bar");
 
-const bars = document.querySelectorAll(".bar");
-const summary = document.querySelectorAll(".summary");
-let isDropdownOpen = false;
+  bars.forEach(bar => bar.addEventListener("click", displaySummary));
+}
+displayDays(days);
+
+function searchDays() {
+  daysBox.innerHTML = "";
+  let filteredDays = days.filter(day => {
+    if (
+      day.title.toLowerCase().includes(this.value.toLowerCase()) ||
+      day.summary.toLowerCase().includes(this.value.toLowerCase())
+    ) {
+      return day;
+    }
+  });
+  displayDays(filteredDays);
+}
+
 
 function displaySummary() {
-  if (!isDropdownOpen) {
+  if (this.nextElementSibling.style.display !== "block") {
+    this.parentNode.classList.add("expand");
     this.nextElementSibling.style.display = "block";
     this.children[1].innerHTML = `<i class="fas fa-caret-up"></i>`;
-    isDropdownOpen = true;
   } else {
+    this.parentNode.classList.remove("expand");
     this.nextElementSibling.style.display = "none";
     this.children[1].innerHTML = `<i class="fas fa-caret-down"></i>`;
-    isDropdownOpen = false;
+
   }
 }
 
-bars.forEach(bar => bar.addEventListener("click", displaySummary));
+searchBox.addEventListener("input", searchDays);
